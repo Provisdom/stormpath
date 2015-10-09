@@ -12,16 +12,15 @@
 
 (defmacro doto-not-nil
   "Evaluates x then calls all of the methods and functions with the
-  value of x supplied at the front of the given arguments. The value you are setting must not
-  be nil. The forms
-  are evaluated in order.  Returns x."
-  {:added "1.0"}
+  value of x supplied at the front of the given arguments. The arguments must not be nil.
+  The forms are evaluated in order.  Returns x."
   [x & forms]
   (let [gx (gensym)]
     `(let [~gx ~x]
        ~@(map (fn [f]
                 (if (seq? f)
-                  `(when (some? ~(second f))
+                  `(when (and ~@(map (fn [y]
+                                       `(some? ~y)) (rest f)))
                      (~(first f) ~x ~@(next f)))
                   `(~f ~gx)))
               forms)
