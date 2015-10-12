@@ -1,7 +1,7 @@
 (ns pro.stormpath.account
   (:require [pro.stormpath.core :as storm]
             [clojure.stacktrace :as stack]
-            [pro.stormpath.util :as u])
+            [pro.stormpath.util :as u :refer [doto-not-nil success]])
   (:import (com.stormpath.sdk.account Account Accounts)
            (com.stormpath.sdk.resource ResourceException)))
 
@@ -13,11 +13,11 @@
 
 (defn- set-account-spec
   [account account-spec]
-  (doto account
-    (.setGivenName (:fname account-spec))
-    (.setSurname (:lname account-spec))
-    (.setEmail (:email account-spec))
-    (.setPassword (:password account-spec))))
+  (doto-not-nil account
+                (.setGivenName (:fname account-spec))
+                (.setSurname (:lname account-spec))
+                (.setEmail (:email account-spec))
+                (.setPassword (:password account-spec))))
 
 (defn- make-account
   [client]
@@ -34,7 +34,7 @@
                     make-account
                     (set-account-spec account-spec))]
     (try
-      (.createAccount application account)
+      (success {:account (.createAccount application account)})
       (catch ResourceException ex
         (u/resource-ex->map ex)))))
 
@@ -43,10 +43,13 @@
   [account account-spec]
   (let [account (set-account-spec account account-spec)]
     (try
-      (.save account)
+      (success (.save account))
       (catch ResourceException ex
-        ex))))
+        (u/resource-ex->map ex)))))
 
 (defn delete-account
   [account]
-  (.delete account))
+  (try
+    (success (.delete account))
+    (catch ResourceException ex
+      (u/resource-ex->map ex))))

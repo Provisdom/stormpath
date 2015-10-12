@@ -1,12 +1,19 @@
 (ns pro.stormpath.util)
 
-(defn- fail
+(defn fail
   [content]
   (merge {:success false} content))
+
+(defn success
+  [content]
+  (merge {:success true} content))
 
 (defn resource-ex->map
   [ex]
   (fail {:message           (.getMessage ex)
+         :status            (.getStatus ex)
+         :code              (.getCode ex)
+         :more-info         (.getMoreInfo ex)
          :developer-message (.getDeveloperMessage ex)
          :trace             (.getStackTrace ex)}))
 
