@@ -4,7 +4,7 @@
            [com.stormpath.sdk.application Applications]))
 
 (def home (System/getProperty "user.home"))
-(def path (str home "/.stormpath/apiKey-1HW331LGYY2V70AUO2JLF73S6.properties"))
+(def path (str home "/.stormpath/apiKey.properties"))
 (def app-name "My Application")
 
 (defn build-api-key
