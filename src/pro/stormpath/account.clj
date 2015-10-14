@@ -1,7 +1,5 @@
 (ns pro.stormpath.account
-  (:require [pro.stormpath.core :as storm]
-            [clojure.stacktrace :as stack]
-            [pro.stormpath.util :as u :refer [doto-not-nil success]])
+  (:require [pro.stormpath.util :as u :refer [doto-not-nil success]])
   (:import (com.stormpath.sdk.account Account Accounts)
            (com.stormpath.sdk.resource ResourceException)))
 
@@ -53,3 +51,12 @@
     (success (.delete account))
     (catch ResourceException ex
       (u/resource-ex->map ex))))
+
+(defn get-groups
+  [account]
+  (.getGroups account))
+
+(defn get-group-names
+  [account]
+  (map (fn [group]
+         (.getName group)) (get-groups account)))
