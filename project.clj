@@ -1,4 +1,4 @@
-(defproject pro/stormpath "0.1.2-SNAPSHOT"
+(defproject pro/stormpath "0.1.2"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
