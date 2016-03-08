@@ -1,4 +1,4 @@
-(ns pro.stormpath.util)
+(ns provisdom.stormpath.util)
 
 (defn fail
   [content]

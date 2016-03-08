@@ -1,6 +1,6 @@
-(ns pro.stormpath.directory
-  (:require [pro.stormpath.core :refer [get-tenant]]
-            [pro.stormpath.util :refer [doto-not-nil]])
+(ns provisdom.stormpath.directory
+  (:require [provisdom.stormpath.core :refer [get-tenant]]
+            [provisdom.stormpath.util :refer [doto-not-nil]])
   (:import (com.stormpath.sdk.directory Directory DirectoryStatus Directories)))
 
 (defn- status->directory-status

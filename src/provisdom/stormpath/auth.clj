@@ -1,5 +1,5 @@
-(ns pro.stormpath.auth
-  (:require [pro.stormpath.util :as u :refer [success]])
+(ns provisdom.stormpath.auth
+  (:require [provisdom.stormpath.util :as u :refer [success]])
   (:import (com.stormpath.sdk.authc UsernamePasswordRequest)
            (com.stormpath.sdk.resource ResourceException)))
 

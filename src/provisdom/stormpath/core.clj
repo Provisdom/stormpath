@@ -1,4 +1,4 @@
-(ns pro.stormpath.core
+(ns provisdom.stormpath.core
   (:import [com.stormpath.sdk.client Clients]
            [com.stormpath.sdk.api ApiKeys]
            [com.stormpath.sdk.application Applications]))

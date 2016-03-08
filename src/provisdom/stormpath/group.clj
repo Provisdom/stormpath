@@ -1,6 +1,6 @@
-(ns pro.stormpath.group
-  (:require [pro.stormpath.util :refer [doto-not-nil]]
-            [pro.stormpath.util :as u])
+(ns provisdom.stormpath.group
+  (:require [provisdom.stormpath.util :refer [doto-not-nil]]
+            [provisdom.stormpath.util :as u])
   (:import (com.stormpath.sdk.group Group GroupStatus)
            (com.stormpath.sdk.resource ResourceException)))
 
