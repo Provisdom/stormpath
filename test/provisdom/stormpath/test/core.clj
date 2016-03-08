@@ -5,7 +5,7 @@
 (defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
                            :secret (System/getenv "STORMPATH_APP_SECRET")}))
 
-(def application (s/application client "Postal Messenger"))
+(def application (s/application client "Test"))
 
 (comment
   (def jwt-map (oauth/access-token application "john@example.com" "Password1"))
