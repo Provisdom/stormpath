@@ -3,6 +3,8 @@
   (:import (com.stormpath.sdk.account Account Accounts)
            (com.stormpath.sdk.resource ResourceException)))
 
+(def account-whitelist-keys [:fname :lname :email :password :username])
+
 (defn account-from-username
   "Gets an account from a username. Returns an `Account` object."
   [application username]
@@ -10,27 +12,33 @@
     (.. application (getAccounts criteria) (single))))
 
 (defn- set-account-spec
-  [account account-spec]
-  (doto-not-nil account
-                (.setGivenName (:fname account-spec))
-                (.setSurname (:lname account-spec))
-                (.setEmail (:email account-spec))
-                (.setPassword (:password account-spec))))
+  [account opts]
+  (let [account (doto-not-nil account
+                              (.setGivenName (:fname opts))
+                              (.setSurname (:lname opts))
+                              (.setEmail (:email opts))
+                              (.setUsername (:username opts))
+                              (.setPassword (:password opts)))
+        custom-data (.getCustomData account)]
+    (doseq [[k v] (apply dissoc opts account-whitelist-keys)]
+      (.put custom-data k v))))
 
 (defn- make-account
   [client]
   (.instantiate client Account))
 
 (defn create-account
-  "Creates an account with the spec:
+  "Creates an account with the spec for `opts` below:
   `:fname`: Given name
   `:lname`: Surname
   `:email`: Email
-  `:password` Password"
-  [client application account-spec]
+  `:password` Password
+  `:username`: Optional, defaults to email if unset
+  And any custom data you want (up to 10MB per user)"
+  [client application opts]
   (let [account (-> client
                     make-account
-                    (set-account-spec account-spec))]
+                    (set-account-spec opts))]
     (try
       (success {:account (.createAccount application account)})
       (catch ResourceException ex
