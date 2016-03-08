@@ -8,6 +8,9 @@
   [content]
   (merge {:success true} content))
 
+(defn contains-many? [m & ks]
+  (every? true? (map #(contains? m %) ks)))
+
 (defn resource-ex->map
   [ex]
   (fail {:message           (.getMessage ex)
