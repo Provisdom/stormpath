@@ -1,36 +1,24 @@
 (ns provisdom.stormpath.core
-  (:import [com.stormpath.sdk.client Clients]
+  (:require [provisdom.stormpath.util :as u])
+  (:import [com.stormpath.sdk.client Clients Client]
            [com.stormpath.sdk.api ApiKeys]
            [com.stormpath.sdk.application Applications]))
 
-(def home (System/getProperty "user.home"))
-(def path (str home "/.stormpath/apiKey.properties"))
-(def app-name "My Application")
-
-(defn build-api-key
-  "Builds a Stormpath API key"
-  [path]
-  (.. ApiKeys (builder) (setFileLocation path) (build)))
-
-(defn build-client
-  "Builds a Stormpath client. The client object should be passed around the application.
+(defn client
+  "Builds a Stormpath client given a name and a creds map containing {:id \"yourid\" :secret \"your secret\"}. The
+  client object should be passed around the application.
   IMPORTANT:
   The client instance is intended to be an application singleton. You should reuse this instance throughout your
   application code. You should not create multiple Client instances as it could negatively affect caching."
-  [api-key]
-  (.. Clients (builder) (setApiKey api-key) (build)))
+  [creds]
+  [{:pre [(map? creds) (u/contains-many? creds :id :secret)]}]
+  (let [{:keys [id secret]} creds
+        api-key (.. ApiKeys (builder) (setId id) (setSecret secret) (build))]
+    (.. Clients (builder) (setApiKey api-key) (build))))
 
-(defn get-tenant
-  [client]
-  (.getCurrentTenant client))
-
-(defn get-tenant-application
-  "Gets an application for a given tenant."
-  [tenant name]
-  (let [applications (.. tenant (getApplications (Applications/where (.. Applications (name) (eqIgnoreCase name)))))]
-    (.. applications (iterator) (next))))
-
-(defn get-application
-  "Gets an application for the current tenant."
+(defn application
   [client name]
-  (get-tenant-application (get-tenant client) name))
+  [{:pre [(instance? Client client) (string? name)]}]
+  (let [tenant (.getCurrentTenant client)
+        apps (.. tenant (getApplications (Applications/where (.. Applications (name) (eqIgnoreCase name)))))]
+    (.. apps (iterator) (next))))
