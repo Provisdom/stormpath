@@ -1,5 +1,5 @@
 (ns provisdom.stormpath.oauth
-  (:require [provisdom.stormpath.util :as u])
+  (:require [provisdom.stormpath.marshal :as m])
   (:import [com.stormpath.sdk.oauth Oauth2Requests Authenticators]
            (com.stormpath.sdk.resource ResourceException)))
 
@@ -12,11 +12,7 @@
     (-> Authenticators/PASSWORD_GRANT_AUTHENTICATOR
         (.forApplication application)
         (.authenticate (.build req))
-        (u/obj->map :access-token .getAccessTokenString
-                    :refresh-token .getRefreshTokenString
-                    :token-type .getTokenType
-                    :expires-in .getExpiresIn
-                    :stormpath-access-token-href .getAccessTokenHref))))
+        m/marshal)))
 
 (defn validate-token
   "Validates a token. Takes the Stormpath application, the token you want to validate, and
