@@ -1,7 +1,8 @@
 (ns provisdom.stormpath.marshal
   (:import [com.stormpath.sdk.oauth OauthGrantAuthenticationResult JwtAuthenticationResult]
            [com.stormpath.sdk.account Account AccountStatus]
-           [com.stormpath.sdk.group GroupList Group GroupStatus]))
+           [com.stormpath.sdk.group GroupList Group GroupStatus]
+           (com.stormpath.sdk.impl.oauth DefaultOauthGrantAuthenticationResult)))
 
 (defmulti marshal
           "Marshalls the given object based on its class" class)
@@ -12,7 +13,8 @@
    :refresh-token               (.getRefreshTokenString obj)
    :token-type                  (.getTokenType obj)
    :expires-in                  (.getExpiresIn obj)
-   :stormpath-access-token-href (.getAccessTokenHref obj)})
+   :stormpath-access-token-href (.getAccessTokenHref obj)
+   :obj                         obj})
 
 (defmethod marshal JwtAuthenticationResult
   [obj]
@@ -44,7 +46,7 @@
     AccountStatus/ENABLED :enabled
     AccountStatus/DISABLED :disabled
     AccountStatus/UNVERIFIED :unverifed
-    nil))
+    nil)) DefaultOauthGrantAuthenticationResult
 
 (defmethod marshal GroupList
   [obj]

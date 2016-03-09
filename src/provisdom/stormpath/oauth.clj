@@ -34,3 +34,20 @@
              bean))
        (catch ResourceException ex
          (.getCode ex))))))
+
+(defn refresh-access-token
+  [application refresh-token-str]
+  (let [builder (.builder Oauth2Requests/REFRESH_GRANT_REQUEST)
+        req (.setRefreshToken builder refresh-token-str)]
+    (-> Authenticators/REFRESH_GRANT_AUTHENTICATOR
+        (.forApplication application)
+        (.authenticate (.build req))
+        m/marshal)))
+
+(defn revoke-access-token
+  [jwt-map]
+  (-> jwt-map :obj .getAccessToken .delete))
+
+(defn revoke-refresh-token
+  [jwt-map]
+  (-> jwt-map :obj .getRefreshToken .delete))
