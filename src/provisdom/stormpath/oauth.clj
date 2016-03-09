@@ -1,7 +1,7 @@
 (ns provisdom.stormpath.oauth
   (:require [provisdom.stormpath.marshal :as m])
   (:import [com.stormpath.sdk.oauth Oauth2Requests Authenticators]
-           (com.stormpath.sdk.resource ResourceException)))
+           [com.stormpath.sdk.resource ResourceException]))
 
 (defn access-token
   [application username password]
@@ -33,7 +33,7 @@
              (.authenticate (.build req))
              bean))
        (catch ResourceException ex
-         (.getCode ex))))))
+         (m/marshal ex))))))
 
 (defn refresh-access-token
   [application refresh-token-str]
