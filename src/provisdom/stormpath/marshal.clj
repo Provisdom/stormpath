@@ -5,7 +5,7 @@
            [com.stormpath.sdk.resource ResourceException]
            [com.stormpath.sdk.impl.resource AbstractResource]))
 
-(defmulti marshal*
+(defmulti ^:private marshal*
           "Marshalls the given object based on its class" class)
 
 (defmethod marshal* :default [obj] obj)
