@@ -2,10 +2,13 @@
   (:import [com.stormpath.sdk.oauth OauthGrantAuthenticationResult JwtAuthenticationResult]
            [com.stormpath.sdk.account Account AccountStatus]
            [com.stormpath.sdk.group GroupList Group GroupStatus]
-           [com.stormpath.sdk.resource ResourceException]))
+           [com.stormpath.sdk.resource ResourceException]
+           [com.stormpath.sdk.impl.resource AbstractResource]))
 
-(defmulti ^:private marshal*
+(defmulti marshal*
           "Marshalls the given object based on its class" class)
+
+(defmethod marshal* :default [obj] obj)
 
 (defmethod marshal* OauthGrantAuthenticationResult
   [obj]
@@ -29,7 +32,7 @@
    :fname                    (.getGivenName obj)
    :mname                    (.getMiddleName obj)
    :lname                    (.getSurname obj)
-   :status                   (marshal* (.getStatus obj))
+   :status                   (.getStatus obj)
    :groups                   (.getGroups obj)
    :directory                (.getDirectory obj)
    :tenant                   (.getTenant obj)
@@ -73,9 +76,29 @@
    :developer-message (.getDeveloperMessage obj)
    :trace             (.getStackTrace obj)})
 
+(defn materialized?
+  [obj]
+  (let [field (.getDeclaredField AbstractResource "materialized")
+        _ (.setAccessible field true)
+        value (.get field obj)]
+    (.setAccessible field false)
+    (boolean value)))
+
 (defn marshal
   [obj]
-  (assoc (marshal* obj) :obj obj))
+  (let [marshalled (marshal* obj)]
+    (if (map? marshalled)
+      (assoc
+        (into {}
+              (map (fn [[k v]]
+                     [k
+                      (if (instance? AbstractResource v)
+                        (if (materialized? v)
+                          (marshal v)
+                          v)
+                        (marshal v))]) marshalled))
+        :obj obj)
+      marshalled)))
 
 (defmacro obj->map [o & bindings]
   (let [s (gensym "local")]
