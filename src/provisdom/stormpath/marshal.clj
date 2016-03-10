@@ -4,7 +4,7 @@
            [com.stormpath.sdk.group GroupList Group GroupStatus]
            [com.stormpath.sdk.resource ResourceException CollectionResource]
            [com.stormpath.sdk.impl.resource AbstractResource]
-           (com.stormpath.sdk.directory Directory)))
+           [com.stormpath.sdk.directory Directory]))
 
 (defmulti ^:private marshal*
           "Marshalls the given object based on its class" class)
@@ -75,7 +75,7 @@
    :status      (.getStatus obj)
    :accounts    (.getAccounts obj)})
 
-(defmethod marshal* ResourceException
+(defmethod marshal* com.stormpath.sdk.error.Error
   [obj]
   {:message           (.getMessage obj)
    :status            (.getStatus obj)
