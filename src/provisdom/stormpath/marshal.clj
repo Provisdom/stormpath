@@ -1,9 +1,10 @@
 (ns provisdom.stormpath.marshal
   (:import [com.stormpath.sdk.oauth OauthGrantAuthenticationResult JwtAuthenticationResult]
-           [com.stormpath.sdk.account Account AccountStatus]
+           [com.stormpath.sdk.account Account AccountStatus AccountList]
            [com.stormpath.sdk.group GroupList Group GroupStatus]
-           [com.stormpath.sdk.resource ResourceException]
-           [com.stormpath.sdk.impl.resource AbstractResource]))
+           [com.stormpath.sdk.resource ResourceException CollectionResource]
+           [com.stormpath.sdk.impl.resource AbstractResource]
+           (com.stormpath.sdk.directory Directory)))
 
 (defmulti ^:private marshal*
           "Marshalls the given object based on its class" class)
@@ -50,9 +51,9 @@
     AccountStatus/UNVERIFIED :unverifed
     nil))
 
-(defmethod marshal* GroupList
+(defmethod marshal* CollectionResource
   [obj]
-  ())
+  (map identity obj))
 
 (defmethod marshal* Group
   [obj]
@@ -66,6 +67,13 @@
     GroupStatus/ENABLED :enabled
     GroupStatus/DISABLED :disabled
     nil))
+
+(defmethod marshal* Directory
+  [obj]
+  {:name        (.getName obj)
+   :description (.getDescription obj)
+   :status      (.getStatus obj)
+   :accounts    (.getAccounts obj)})
 
 (defmethod marshal* ResourceException
   [obj]
@@ -87,18 +95,23 @@
 (defn marshal
   [obj]
   (let [marshalled (marshal* obj)]
-    (if (map? marshalled)
-      (assoc
-        (into {}
-              (map (fn [[k v]]
-                     [k
-                      (if (instance? AbstractResource v)
-                        (if (materialized? v)
-                          (marshal v)
-                          v)
-                        (marshal v))]) marshalled))
-        :obj obj)
-      marshalled)))
+    (letfn [(marshal-value [v]
+              (if (instance? AbstractResource v)
+                (if (materialized? v)
+                  (marshal v)
+                  v)
+                (marshal v)))]
+      (cond
+        (map? marshalled)
+        (assoc
+          (into {}
+                (map (fn [[k v]]
+                       [k
+                        (marshal-value v)]) marshalled))
+          :obj obj)
+        (seq? marshalled)
+        (map marshal-value marshalled)
+        :default marshalled))))
 
 (defmacro obj->map [o & bindings]
   (let [s (gensym "local")]
