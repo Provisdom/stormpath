@@ -3,7 +3,7 @@
   :repositories [["clojars" "http://clojars.org/repo/"]
                  ["maven-central" "http://repo1.maven.org/maven2/"]]
 
-  :dependencies '[[provisdom/boot-tasks "0.3.0" :scope "test" :exclusions [commons-codec]]])
+  :dependencies '[[provisdom/boot-tasks "0.4.1" :scope "test" :exclusions [commons-codec]]])
 
 (require
   '[provisdom.boot-tasks :refer :all])
