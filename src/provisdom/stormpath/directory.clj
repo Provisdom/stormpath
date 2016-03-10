@@ -29,13 +29,14 @@
 (defn- provider-for
   [type]
   (condp = (eval type)
-    :google (.. Providers -GOOGLE (builder))
-    :facebook (.. Providers -FACEBOOK (builder))))
+    :google (Providers/GOOGLE)
+    :facebook (Providers/FACEBOOK)))
 
 (defn- create-director-req
   [directory opts]
   (let [req (Directories/newCreateRequestFor directory)
         provider (-> (provider-for (:type opts))
+                     (.builder)
                      (.setClientId (:id opts))
                      (.setClientSecret (:secret opts))
                      (.setRedirectUri (:redirect-uri opts))
