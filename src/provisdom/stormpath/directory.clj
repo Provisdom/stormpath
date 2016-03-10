@@ -1,7 +1,10 @@
 (ns provisdom.stormpath.directory
   (:require [provisdom.stormpath.core :refer [get-tenant]]
-            [provisdom.stormpath.util :refer [doto-not-nil]])
-  (:import (com.stormpath.sdk.directory Directory DirectoryStatus Directories)))
+            [provisdom.stormpath.util :refer [doto-not-nil]]
+            [provisdom.stormpath.marshal :as m])
+  (:import [com.stormpath.sdk.directory Directory DirectoryStatus Directories]
+           [com.stormpath.sdk.provider Providers]
+           [com.stormpath.sdk.resource ResourceException]))
 
 (defn- status->directory-status
   [status]
@@ -19,9 +22,25 @@
 
 (defn get-directory
   "Gets a directory given a `name`."
-  [tenant name]
-  (let [directories (.getDirectories tenant (Directories/where (.. Directories (name) (eqIgnoreCase name))))]
+  [client name]
+  (let [directories (.getDirectories (get-tenant client) (Directories/where (.. Directories (name) (eqIgnoreCase name))))]
     (first directories)))
+
+(defn- provider-for
+  [type]
+  (condp = (eval type)
+    :google (.. Providers -GOOGLE (builder))
+    :facebook (.. Providers -FACEBOOK (builder))))
+
+(defn- create-director-req
+  [directory opts]
+  (let [req (Directories/newCreateRequestFor directory)
+        provider (-> (provider-for (:type opts))
+                     (.setClientId (:id opts))
+                     (.setClientSecret (:secret opts))
+                     (.setRedirectUri (:redirect-uri opts))
+                     (.build))]
+    (.. req (forProvider provider) (build))))
 
 (defn create-directory
   "Creates a directory with the spec:
@@ -29,11 +48,18 @@
   `:description`: The description of the directory
   `:status`: Either :enabled or :disabled"
   ([client spec]
-   (create-directory client (get-tenant client) spec))
-  ([client tenant spec]
-   (let [directory (.instantiate client Directory)]
-     (set-directory-spec directory spec)
-     (.createDirectory tenant directory))))
+   (create-directory client spec nil))
+  ([client spec opts]
+   (create-directory client (get-tenant client) spec opts))
+  ([client tenant spec opts]
+   (let [directory (.instantiate client Directory)
+         _ (set-directory-spec directory spec)
+         directory (if opts
+                     (create-director-req directory opts)
+                     directory)]
+     (try
+       (.createDirectory tenant directory)
+       (catch ResourceException ex (m/marshal ex))))))
 
 (defn update-directory
   "Updates a directory"
