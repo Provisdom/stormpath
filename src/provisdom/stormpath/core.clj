@@ -2,7 +2,10 @@
   (:require [provisdom.stormpath.util :as u])
   (:import [com.stormpath.sdk.client Clients Client]
            [com.stormpath.sdk.api ApiKeys]
-           [com.stormpath.sdk.application Applications]))
+           [com.stormpath.sdk.application Applications]
+           [com.stormpath.sdk.accountStoreMapping AccountStoreMapping]))
+
+(defn get-tenant [client] (.getCurrentTenant client))
 
 (defn client
   "Builds a Stormpath client given a name and a creds map containing {:id \"yourid\" :secret \"your secret\"}. The
@@ -22,3 +25,10 @@
   (let [tenant (.getCurrentTenant client)
         apps (.. tenant (getApplications (Applications/where (.. Applications (name) (eqIgnoreCase name)))))]
     (.. apps (iterator) (next))))
+
+(defn map-account-store
+  [client application account-store]
+  (let [mapping (doto (.instantiate client AccountStoreMapping)
+                  (.setAccountStore account-store)
+                  (.setApplication application))]
+    (.createAccountStoreMapping application mapping)))
