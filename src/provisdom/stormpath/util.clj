@@ -11,15 +11,6 @@
 (defn contains-many? [m & ks]
   (every? true? (map #(contains? m %) ks)))
 
-(defn resource-ex->map
-  [ex]
-  (fail {:message           (.getMessage ex)
-         :status            (.getStatus ex)
-         :code              (.getCode ex)
-         :more-info         (.getMoreInfo ex)
-         :developer-message (.getDeveloperMessage ex)
-         :trace             (.getStackTrace ex)}))
-
 (defmacro doto-not-nil
   "Evaluates x then calls all of the methods and functions with the
   value of x supplied at the front of the given arguments. The arguments must not be nil.

@@ -1,6 +1,7 @@
 (ns provisdom.stormpath.group
   (:require [provisdom.stormpath.util :refer [doto-not-nil]]
-            [provisdom.stormpath.util :as u])
+            [provisdom.stormpath.util :as u]
+            [provisdom.stormpath.marshal :as m])
   (:import (com.stormpath.sdk.group Group GroupStatus)
            (com.stormpath.sdk.resource ResourceException)))
 
@@ -31,7 +32,7 @@
                     (.setStatus (-> group-spec :status status->group-status)))
       (.createGroup directory group))
     (catch ResourceException ex
-      (u/resource-ex->map ex))))
+      (m/marshal ex))))
 
 (defn delete-group
   [group]
