@@ -1,15 +1,17 @@
 (ns provisdom.stormpath.oauth.google
-  (:require [clj-http.client :as http]
-            [cheshire.core :as json]
+  (:require
+    #?(:clj [clj-http.client :as http]
+       [cheshire.core :as json])
             [cemerick.url :as cu]
             [provisdom.stormpath.util :as u]))
 
 ;https://developers.google.com/identity/protocols/OpenIDConnect#discovery
-(def discovery-doc-url "https://accounts.google.com/.well-known/openid-configuration")
+#?(:clj
+   (def discovery-doc-url "https://accounts.google.com/.well-known/openid-configuration")
 
-(defonce discovery-document (-> discovery-doc-url http/get :body (json/parse-string true)))
-(def auth-req-base-url (:authorization_endpoint discovery-document))
-(def token-endpoint (:token_endpoint discovery-document))
+   (defonce discovery-document (-> discovery-doc-url http/get :body (json/parse-string true)))
+   (def auth-req-base-url (:authorization_endpoint discovery-document))
+   (def token-endpoint (:token_endpoint discovery-document)))
 
 ;https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
 (defn auth-url
