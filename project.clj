@@ -1,4 +1,4 @@
-(defproject provisdom/stormpath "0.1.3"
+(defproject provisdom/stormpath "0.2.0"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
