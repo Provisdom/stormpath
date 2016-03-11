@@ -26,12 +26,6 @@
   (let [directories (.getDirectories (get-tenant client) (Directories/where (.. Directories (name) (eqIgnoreCase name))))]
     (first directories)))
 
-(defn- provider-for
-  [type]
-  (condp = (eval type)
-    :google (Providers/GOOGLE)
-    :facebook (Providers/FACEBOOK)))
-
 (defn- create-director-req
   [directory opts]
   (let [req (Directories/newCreateRequestFor directory)

@@ -1,6 +1,7 @@
 (ns provisdom.stormpath.util
   (:require [clojure.set :as cs]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  #?(:clj (:import [com.stormpath.sdk.provider Providers])))
 
 (defn fail
   [content]
@@ -53,3 +54,10 @@
                   `(~f ~gx)))
               forms)
        ~gx)))
+
+#?(:clj
+   (defn provider-for
+     [type]
+     (condp = (eval type)
+       :google (Providers/GOOGLE)
+       :facebook (Providers/FACEBOOK))))
