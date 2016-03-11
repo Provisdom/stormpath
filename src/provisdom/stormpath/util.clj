@@ -11,6 +11,17 @@
 (defn contains-many? [m & ks]
   (every? true? (map #(contains? m %) ks)))
 
+(defn assoc-if
+  ([map key val] (if val (assoc map key val) map))
+  ([map key val & kvs]
+   (let [ret (assoc-if map key val)]
+     (if (empty? kvs)
+       ret
+       (if (next kvs)
+         (apply assoc-if ret (first kvs) (second kvs) (nnext kvs))
+         (throw (IllegalArgumentException.
+                  "assoc expects even number of arguments after map/vector, found odd number")))))))
+
 (defmacro doto-not-nil
   "Evaluates x then calls all of the methods and functions with the
   value of x supplied at the front of the given arguments. The arguments must not be nil.
