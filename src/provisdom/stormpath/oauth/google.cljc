@@ -20,7 +20,7 @@
   (-> base
       cu/url
       (update :query (fn [q]
-                       (into {} (filter second (merge q (u/map_->- params))))))
+                       (into {} (filter second (merge q (u/dash->underscore params))))))
       str))
 
 ;https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
