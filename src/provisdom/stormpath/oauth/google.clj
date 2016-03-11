@@ -10,10 +10,11 @@
 (defonce discovery-document (-> discovery-doc-url http/get :body (json/parse-string true)))
 (def auth-req-base-url (:authorization_endpoint discovery-document))
 
-(defn auth-url {}
+;https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
+(defn auth-url
   [base-url
-   {:keys [client-id response-type scope
-           redirect-uri state login-hint]
+   {:keys [client-id response-type scope prompt access-type hd
+           display include-granted-scopes redirect-uri state login-hint]
     :or   {response-type "code"
            scope         "openid email"}}]
   (-> base-url
@@ -24,5 +25,10 @@
                                   :scope scope
                                   :redirect_uri redirect-uri
                                   :state state
-                                  :login_hint login-hint))
+                                  :login_hint login-hint
+                                  :prompt prompt
+                                  :access_type access-type
+                                  :display display
+                                  :include_granted_scopes include-granted-scopes
+                                  :hd hd))
       str))
