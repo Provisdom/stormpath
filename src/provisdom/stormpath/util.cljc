@@ -19,8 +19,9 @@
        ret
        (if (next kvs)
          (apply assoc-if ret (first kvs) (second kvs) (nnext kvs))
-         (throw (IllegalArgumentException.
-                  "assoc expects even number of arguments after map/vector, found odd number")))))))
+         (let [msg "assoc expects even number of arguments after map/vector, found odd number"]
+           (throw #?(:clj  (IllegalArgumentException. msg)
+                     :cljs (js/Error. msg)))))))))
 
 (defmacro doto-not-nil
   "Evaluates x then calls all of the methods and functions with the
