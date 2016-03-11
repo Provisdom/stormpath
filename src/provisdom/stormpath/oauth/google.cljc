@@ -13,7 +13,8 @@
 
      (defonce discovery-document (-> discovery-doc-url http/get :body (json/parse-string true)))
      (def auth-req-base-url (:authorization_endpoint discovery-document))
-     (def token-endpoint (:token_endpoint discovery-document))))
+     (def token-endpoint (:token_endpoint discovery-document))
+     (def token-validation-url "https://www.googleapis.com/oauth2/v3/tokeninfo")))
 
 (defn url
   [base params]
@@ -29,3 +30,13 @@
   (url base-url (merge {:response-type "code"
                         :scope         "openid email"}
                        (u/update-if opts :state pr-str))))
+
+#?(:clj
+   (defn validate-token!
+     [token]
+     (-> (http/get (-> token-validation-url
+                       cu/url
+                       (assoc-in [:query "id_token"] token)
+                       str))
+         :body
+         (json/decode true))))
