@@ -1,4 +1,6 @@
-(ns provisdom.stormpath.util)
+(ns provisdom.stormpath.util
+  (:require [clojure.set :as cs]
+            [clojure.string :as str]))
 
 (defn fail
   [content]
@@ -22,6 +24,19 @@
          (let [msg "assoc expects even number of arguments after map/vector, found odd number"]
            (throw #?(:clj  (IllegalArgumentException. msg)
                      :cljs (js/Error. msg)))))))))
+
+(defn update-if
+  [m k f]
+  (if-let [v (get m k)]
+    (assoc-if m k (f v))
+    m))
+
+(defn map_->-
+  [m]
+  (let [ks (keys m)]
+    (cs/rename-keys m (into {}
+                            (map (fn [k]
+                                   [k (-> k name (str/replace "_" "-") keyword)]) ks)))))
 
 (defmacro doto-not-nil
   "Evaluates x then calls all of the methods and functions with the
