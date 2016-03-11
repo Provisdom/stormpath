@@ -32,6 +32,7 @@
                        (u/update-if opts :state pr-str))))
 
 #?(:clj
+   ;; TODO: Add local? option where validation will occur locally w/o another http req
    (defn validate-token!
      [token]
      (-> (http/get (-> token-validation-url
