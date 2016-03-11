@@ -3,7 +3,8 @@
   (:import [com.stormpath.sdk.client Clients Client]
            [com.stormpath.sdk.api ApiKeys]
            [com.stormpath.sdk.application Applications]
-           [com.stormpath.sdk.accountStoreMapping AccountStoreMapping]))
+           [com.stormpath.sdk.accountStoreMapping AccountStoreMapping]
+           (com.stormpath.sdk.impl.application DefaultApplicationAccountStoreMapping)))
 
 (defn get-tenant [client] (.getCurrentTenant client))
 
@@ -28,7 +29,8 @@
 
 (defn map-account-store
   [client application account-store]
-  (let [mapping (doto (.instantiate client AccountStoreMapping)
+  ;; TODO: For some reason I get a UnknownClassException when instantiating AccountStoreMapping
+  (let [mapping (doto (.instantiate client DefaultApplicationAccountStoreMapping)
                   (.setAccountStore account-store)
                   (.setApplication application))]
     (.createAccountStoreMapping application mapping)))
