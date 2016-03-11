@@ -9,6 +9,7 @@
 
 (defonce discovery-document (-> discovery-doc-url http/get :body (json/parse-string true)))
 (def auth-req-base-url (:authorization_endpoint discovery-document))
+(def token-endpoint (:token_endpoint discovery-document))
 
 ;https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
 (defn auth-url
