@@ -1,12 +1,12 @@
 (ns provisdom.stormpath.test.core
   (:require [provisdom.stormpath.core :as s]
-            [provisdom.stormpath.oauth :as oauth]
+            [provisdom.stormpath.oauth.core :as oauth]
             [provisdom.stormpath.directory :as dir]))
 
 (defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
                            :secret (System/getenv "STORMPATH_APP_SECRET")}))
 
-(def application (s/application client "Test"))
+(defonce application (s/application client "Test"))
 
 (comment
   (def jwt-map (oauth/access-token application "john@example.com" "Password1"))
