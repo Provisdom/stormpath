@@ -2,7 +2,8 @@
   (:require [provisdom.stormpath.core :as s]
             [provisdom.stormpath.oauth.core :as oauth]
             [provisdom.stormpath.oauth.google :as goauth]
-            [provisdom.stormpath.directory :as dir]))
+            [provisdom.stormpath.directory :as dir]
+            [provisdom.stormpath.group :as group]))
 
 (defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
                            :secret (System/getenv "STORMPATH_APP_SECRET")}))
@@ -21,5 +22,6 @@
                                        :secret       (System/getenv "GOOG_CLIENT_SECRET")
                                        :redirect-uri "postmessage"}))
   (def goog-dir (dir/get-directory client "google-directory"))
+  (def test-dir (dir/get-directory client "Test Directory"))
 
   )
