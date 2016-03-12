@@ -15,12 +15,13 @@
 (defn get-group
   "Returns a `Group` object"
   [directory name]
-  (let [groups (.getGroups directory)
-        group-atom (atom nil)]
-    (doseq [group groups]
-      (when (.. group (getName) (equals name))
-        (reset! group-atom group)))
-    @group-atom))
+  (let [groups-it (-> directory (.getGroups) (.iterator))]
+    (loop [group (.next groups-it)]
+      (if (.. group (getName) (equals name))
+        group
+        (if (.hasNext groups-it)
+          (recur (.next groups-it))
+          nil)))))
 
 (defn create-group
   [client directory group-spec]
