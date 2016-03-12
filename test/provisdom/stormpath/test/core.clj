@@ -1,6 +1,7 @@
 (ns provisdom.stormpath.test.core
   (:require [provisdom.stormpath.core :as s]
             [provisdom.stormpath.oauth.core :as oauth]
+            [provisdom.stormpath.oauth.google :as goauth]
             [provisdom.stormpath.directory :as dir]))
 
 (defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
@@ -20,4 +21,5 @@
                                        :secret       (System/getenv "GOOG_CLIENT_SECRET")
                                        :redirect-uri "postmessage"}))
   (def goog-dir (dir/get-directory client "google-directory"))
+
   )
