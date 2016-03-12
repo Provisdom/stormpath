@@ -4,7 +4,8 @@
            [com.stormpath.sdk.group GroupList Group GroupStatus]
            [com.stormpath.sdk.resource ResourceException CollectionResource]
            [com.stormpath.sdk.impl.resource AbstractResource]
-           [com.stormpath.sdk.directory Directory]))
+           [com.stormpath.sdk.directory Directory]
+           (com.stormpath.sdk.provider GoogleProviderData)))
 
 (defmulti ^:private marshal*
           "Marshalls the given object based on its class" class)
@@ -41,7 +42,13 @@
    :refresh-tokens           (.getRefreshTokens obj)
    :custom-data              (.getCustomData obj)
    :created-at               (.getCreatedAt obj)
-   :modified-at              (.getModifiedAt obj)})
+   :modified-at              (.getModifiedAt obj)
+   :provider-data            (.getProviderData obj)})
+
+(defmethod marshal* GoogleProviderData
+  [obj]
+  {:access-token  (.getAccessToken obj)
+   :refresh-token (.getRefreshToken obj)})
 
 (defmethod marshal* AccountStatus
   [obj]
