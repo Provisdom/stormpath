@@ -1,8 +1,10 @@
 (ns provisdom.stormpath.oauth.google
   (:require
-    #?(:clj [clj-http.client :as http])
+    #?(:clj [cheshire.core :as json])
     #?(:clj
-            [cheshire.core :as json])
+            [provisdom.stormpath.marshal :as m])
+    #?(:clj
+            [clj-http.client :as http])
             [cemerick.url :as cu]
             [provisdom.stormpath.util :as u]))
 
@@ -41,3 +43,12 @@
                        str))
          :body
          (json/decode true))))
+
+#?(:clj
+   (defn account
+     [application code]
+     (let [req (-> (u/provider-for :google) (.account) (.setCode code) (.build))]
+       (-> application
+           (.getAccount req)
+           (.getAccount)
+           m/marshal))))
