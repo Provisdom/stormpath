@@ -1,7 +1,8 @@
 (ns provisdom.stormpath.directory
   (:require [provisdom.stormpath.core :refer [get-tenant]]
             [provisdom.stormpath.util :refer [doto-not-nil]]
-            [provisdom.stormpath.marshal :as m])
+            [provisdom.stormpath.marshal :as m]
+            [provisdom.stormpath.util :as u])
   (:import [com.stormpath.sdk.directory Directory DirectoryStatus Directories]
            [com.stormpath.sdk.provider Providers]
            [com.stormpath.sdk.resource ResourceException]))
@@ -29,7 +30,7 @@
 (defn- create-director-req
   [directory opts]
   (let [req (Directories/newCreateRequestFor directory)
-        provider (-> (provider-for (:type opts))
+        provider (-> (u/provider-for (:type opts))
                      (.builder)
                      (.setClientId (:id opts))
                      (.setClientSecret (:secret opts))
