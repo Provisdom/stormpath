@@ -14,4 +14,5 @@
                  [com.stormpath.sdk/stormpath-sdk-api "1.0.RC8.5"]
                  [com.stormpath.sdk/stormpath-sdk-httpclient "1.0.RC8.5"]
                  [com.stormpath.sdk/stormpath-sdk-oauth "1.0.RC8.5" :exclusions [commons-codec]]
-                 [com.stormpath.sdk/stormpath-sdk-impl "1.0.RC8.5"]])
+                 [com.stormpath.sdk/stormpath-sdk-impl "1.0.RC8.5"]
+                 [org.slf4j/slf4j-simple "1.6.2"]])
