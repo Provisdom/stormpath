@@ -6,7 +6,9 @@
     #?(:clj
             [clj-http.client :as http])
             [cemerick.url :as cu]
-            [provisdom.stormpath.util :as u]))
+            [provisdom.stormpath.util :as u])
+  #?(:clj
+     (:import [com.stormpath.sdk.application Application])))
 
 ;https://developers.google.com/identity/protocols/OpenIDConnect#discovery
 #?(:clj
@@ -20,6 +22,7 @@
 
 (defn url
   [base params]
+  {:pre [(string? base) (map? params)]}
   (-> base
       cu/url
       (update :query (fn [q]
@@ -29,6 +32,7 @@
 ;https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters
 (defn auth-url
   [base-url opts]
+  {:pre [(string? base-url) (map? opts)]}
   (url base-url (merge {:response-type "code"
                         :scope         "openid email"}
                        (u/update-if opts :state pr-str))))
@@ -37,6 +41,7 @@
    ;; TODO: Add local? option where validation will occur locally w/o another http req
    (defn validate-token!
      [token]
+     {:pre [(string? token)]}
      (-> (http/get (-> token-validation-url
                        cu/url
                        (assoc-in [:query "id_token"] token)
@@ -47,6 +52,7 @@
 #?(:clj
    (defn account
      [application code]
+     {:pre [(instance? Application application) (string? code)]}
      (let [req (-> (u/provider-for :google) (.account) (.setCode code) (.build))]
        (-> application
            (.getAccount req)
