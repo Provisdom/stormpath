@@ -11,13 +11,13 @@
 (defn account-from-username
   "Gets an account from a username. Returns an `Account` object."
   [application username]
-  [{:pre [(instance? Application application) (string? username)]}]
+  {:pre [(instance? Application application) (string? username)]}
   (let [criteria (Accounts/where (.. Accounts (username) (eqIgnoreCase username)))]
     (.. application (getAccounts criteria) (single))))
 
 (defn- set-account-spec
   [account opts]
-  [{:pre [(instance? Account account) (map? opts)]}]
+  {:pre [(instance? Account account) (map? opts)]}
   (let [account (doto-not-nil account
                               (.setGivenName (:fname opts))
                               (.setSurname (:lname opts))

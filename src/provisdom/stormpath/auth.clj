@@ -7,7 +7,7 @@
 
 (defn do-auth
   [application username password]
-  [{:pre [(instance? Application application) (string? username) (string? password)]}]
+  {:pre [(instance? Application application) (string? username) (string? password)]}
   (try
     (let [auth-req (UsernamePasswordRequest. username password)
           auth-result (.authenticateAccount application auth-req)]

@@ -15,14 +15,14 @@
   The client instance is intended to be an application singleton. You should reuse this instance throughout your
   application code. You should not create multiple Client instances as it could negatively affect caching."
   [creds]
-  [{:pre [(map? creds) (u/contains-many? creds :id :secret)]}]
+  {:pre [(map? creds) (u/contains-many? creds :id :secret)]}
   (let [{:keys [id secret]} creds
         api-key (.. ApiKeys (builder) (setId id) (setSecret secret) (build))]
     (.. Clients (builder) (setApiKey api-key) (build))))
 
 (defn application
   [client name]
-  [{:pre [(instance? Client client) (string? name)]}]
+  {:pre [(instance? Client client) (string? name)]}
   (let [tenant (.getCurrentTenant client)
         apps (.. tenant (getApplications (Applications/where (.. Applications (name) (eqIgnoreCase name)))))]
     (.. apps (iterator) (next))))

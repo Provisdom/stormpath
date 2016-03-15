@@ -6,7 +6,7 @@
 
 (defn access-token
   [application username password]
-  [{:pre [(instance? Application application) (string? username) (string? password)]}]
+  {:pre [(instance? Application application) (string? username) (string? password)]}
   (let [req-builder (.builder Oauth2Requests/PASSWORD_GRANT_REQUEST)
         req (doto req-builder
               (.setLogin username)
@@ -23,7 +23,7 @@
   For more info: http://docs.stormpath.com/guides/token-management/#validating-access-tokens"
   ([application jwt-str] (validate-token application jwt-str true))
   ([application jwt-str local?]
-   [{:pre [(instance? Application application) (string? jwt-str)]}]
+   {:pre [(instance? Application application) (string? jwt-str)]}
    (let [jwt-req-builder (.builder Oauth2Requests/JWT_AUTHENTICATION_REQUEST)
          req (doto jwt-req-builder
                (.setJwt jwt-str))]
@@ -39,7 +39,7 @@
 
 (defn refresh-access-token
   [application refresh-token-str]
-  [{:pre [(instance? Application application) (string? refresh-access-token)]}]
+  {:pre [(instance? Application application) (string? refresh-access-token)]}
   (let [builder (.builder Oauth2Requests/REFRESH_GRANT_REQUEST)
         req (.setRefreshToken builder refresh-token-str)]
     (-> Authenticators/REFRESH_GRANT_AUTHENTICATOR
@@ -49,10 +49,10 @@
 
 (defn revoke-access-token
   [jwt-map]
-  [{:pre [(map? jwt-map)]}]
+  {:pre [(map? jwt-map)]}
   (-> jwt-map :obj .getAccessToken .delete))
 
 (defn revoke-refresh-token
   [jwt-map]
-  [{:pre [(map? jwt-map)]}]
+  {:pre [(map? jwt-map)]}
   (-> jwt-map :obj .getRefreshToken .delete))
