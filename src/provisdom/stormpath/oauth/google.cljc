@@ -5,6 +5,8 @@
             [provisdom.stormpath.marshal :as m])
     #?(:clj
             [clj-http.client :as http])
+    #?(:clj
+            [clojure.edn :as edn])
             [cemerick.url :as cu]
             [provisdom.stormpath.util :as u])
   #?(:clj
@@ -58,3 +60,25 @@
            (.getAccount req)
            (.getAccount)
            m/marshal))))
+
+#?(:clj
+   (defn account-from-ctx
+     "Returns a marshalled stormpath account for the given Catacumba context"
+     [ctx application]
+     {:pre [(instance? Application application)]}
+     (let [params (:query-params ctx)
+           state (-> params :state edn/read-string)
+           code (:code params)]
+       (when (and (some? code) (= (:security-token state) (::sec/csrftoken ctx)))
+         (-> application (account code) m/marshal)))))
+
+#?(:clj
+   (defn google-auth-url-json
+     "Returns a json string that is a map with the key :url that the client should redirect to in order to authenticate
+     with google."
+     [ctx google-client-id redirect-uri]
+     (json/generate-string
+       {:url (auth-url auth-req-base-url
+                       {:client-id    google-client-id
+                        :redirect-uri redirect-uri
+                        :state        {:security-token (::sec/csrftoken ctx)}})})))
