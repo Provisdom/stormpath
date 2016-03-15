@@ -5,10 +5,12 @@
 
 (defn fail
   [content]
+  {:pre [(map? content)]}
   (merge {:success false} content))
 
 (defn success
   [content]
+  {:pre [(map? content)]}
   (merge {:success true} content))
 
 (defn contains-many? [m & ks]

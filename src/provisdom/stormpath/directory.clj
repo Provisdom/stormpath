@@ -4,8 +4,9 @@
             [provisdom.stormpath.marshal :as m]
             [provisdom.stormpath.util :as u])
   (:import [com.stormpath.sdk.directory Directory DirectoryStatus Directories]
-           [com.stormpath.sdk.provider Providers]
-           [com.stormpath.sdk.resource ResourceException]))
+           [com.stormpath.sdk.resource ResourceException]
+           [com.stormpath.sdk.client Client]
+           [com.stormpath.sdk.tenant Tenant]))
 
 (defn- status->directory-status
   [status]
@@ -24,6 +25,7 @@
 (defn get-directory
   "Gets a directory given a `name`."
   [client name]
+  {:pre [(instance? Client client) (string? name)]}
   (let [directories (.getDirectories (get-tenant client) (Directories/where (.. Directories (name) (eqIgnoreCase name))))]
     (first directories)))
 
@@ -48,6 +50,7 @@
   ([client spec opts]
    (create-directory client (get-tenant client) spec opts))
   ([client tenant spec opts]
+   {:pre [(instance? Client client) (instance? Tenant tenant) (map? spec) (or (map? opts) (nil? opts))]}
    (let [directory (.instantiate client Directory)
          _ (set-directory-spec directory spec)
          directory (if opts
@@ -60,10 +63,12 @@
 (defn update-directory
   "Updates a directory"
   [directory spec]
+  {:pre [(instance? Directory directory) (map? spec)]}
   (-> directory
       (set-directory-spec spec)
       .save))
 
 (defn delete-directory
   [directory]
+  {:pre [(instance? Directory directory)]}
   (.delete directory))

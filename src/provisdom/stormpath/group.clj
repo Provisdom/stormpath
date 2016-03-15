@@ -3,7 +3,9 @@
             [provisdom.stormpath.util :as u]
             [provisdom.stormpath.marshal :as m])
   (:import (com.stormpath.sdk.group Group GroupStatus)
-           (com.stormpath.sdk.resource ResourceException)))
+           (com.stormpath.sdk.resource ResourceException)
+           (com.stormpath.sdk.client Client)
+           (com.stormpath.sdk.directory Directory)))
 
 (defn status->group-status
   [status]
@@ -15,6 +17,7 @@
 (defn get-group
   "Returns a `Group` object"
   [directory name]
+  {:pre [(instance? Directory directory) (string? name)]}
   (let [groups-it (-> directory (.getGroups) (.iterator))]
     (loop [group (.next groups-it)]
       (if (.. group (getName) (equals name))
@@ -25,6 +28,7 @@
 
 (defn create-group
   [client directory group-spec]
+  {:pre [(instance? Client client) (instance? Directory directory) (map? group-spec)]}
   (try
     (let [group (.instantiate client Group)]
       (doto-not-nil group
@@ -37,4 +41,5 @@
 
 (defn delete-group
   [group]
+  {:pre [(instance? Group group)]}
   (.delete group))
