@@ -81,4 +81,4 @@
        {:url (auth-url auth-req-base-url
                        {:client-id    google-client-id
                         :redirect-uri redirect-uri
-                        :state        {:security-token (::sec/csrftoken ctx)}})})))
+                        :state        {:security-token (:catacumba.handlers.security/csrftoken ctx)}})})))
