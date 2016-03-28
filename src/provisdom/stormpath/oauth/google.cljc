@@ -69,7 +69,7 @@
      (let [params (:query-params ctx)
            state (-> params :state edn/read-string)
            code (:code params)]
-       (when (and (some? code) (= (:security-token state) (::sec/csrftoken ctx)))
+       (when (and (some? code) (= (:security-token state) (:catacumba.handlers.security/csrftoken ctx)))
          (-> application (account code) m/marshal)))))
 
 #?(:clj
