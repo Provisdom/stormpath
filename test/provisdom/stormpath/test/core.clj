@@ -1,16 +1,14 @@
 (ns provisdom.stormpath.test.core
   (:require [provisdom.stormpath.core :as s]
             [provisdom.stormpath.oauth.core :as oauth]
-            [provisdom.stormpath.oauth.google :as goauth]
             [provisdom.stormpath.directory :as dir]
             [provisdom.stormpath.group :as group]))
 
-(defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
-                           :secret (System/getenv "STORMPATH_APP_SECRET")}))
-
-(defonce application (s/application client "Test"))
-
 (comment
+  (defonce client (s/client {:id     (System/getenv "STORMPATH_APP_ID")
+                             :secret (System/getenv "STORMPATH_APP_SECRET")}))
+
+  (defonce application (s/application client "Test"))
   (def jwt-map (oauth/access-token application "john@example.com" "Password1"))
   (oauth/validate-token application (str (:access-token jwt-map)) true)
 
