@@ -1,3 +1,4 @@
 language: clojure
 addons:
-  artifacts: true
+  artifacts:
+    debug: true
