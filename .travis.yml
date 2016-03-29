@@ -1,7 +1,7 @@
 language: clojure
 before_install:
  - sudo apt-get install python2.7
- - pip install requests[security]
+ - pip install pyopenssl ndg-httpsclient pyasn1
  - pip install awscli
 addons:
   artifacts:
